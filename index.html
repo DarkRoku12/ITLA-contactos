@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html lang = "en" >
+
+<head>
+
+  <title>Registro</title>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.9.0/css/lightbox.min.css">
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.19/webcam.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.9.0/js/lightbox-plus-jquery.min.js"></script>
+
+</head>
+
+<style>
+  html 
+  { 
+  background: url(http://www.angelesdelanoche.org/wordpress/wp-content/uploads/2015/11/183497-agenda-islamiste-cach-damir-khadir-enfin-retrouv.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  }
+  .full  
+  {
+    background: url(http://www.angelesdelanoche.org/wordpress/wp-content/uploads/2015/11/183497-agenda-islamiste-cach-damir-khadir-enfin-retrouv.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+    height:100%;
+  }  
+  .input-group-addon 
+  {
+    min-width:100px;
+    text-align:left;
+  }
+  .table-sm
+  {
+    margin-top:0px;
+  }
+  .top-buffer { margin-top:10px; }
+  .table-responsive
+  { 
+    max-height: 250px;
+  }
+  .pokemonList 
+  {
+     max-height: 150px;
+  }
+  .space 
+  {
+    margin-left: 8px;
+  }
+  .selfie-icon
+  {
+     width : 50px;
+     height: 50px;
+  }
+</style>
+
+<body onload = "loadAll()" >
+
+<div class="container-fluid full">
+
+  <!-- <br><br><br> -->
+  <form class = "form-group" id = "datos" style = "max-height:200px; min-height:200px" >
+
+    <div class = "col-lg-4 col-lg-offset-1">
+
+            <div class="input-group pagination-centered">
+              <div class="input-group-addon">Nombre</div>
+              <input id="Nombre" type="text" class="form-control" name="Nombre" placeholder="Nombre">
+            </div>
+
+            <div class="input-group pagination-centered">
+              <div class="input-group-addon">Apellido</div>
+              <input id="Apellido" type="text" class="form-control" name="Apellido" placeholder="Apellido">
+            </div>
+            
+            <div class="input-group pagination-centered">
+              <div class="input-group-addon">Cédula</div>
+              <input id="Cedula" type="text" class="form-control" name="Cédula" placeholder="xxx-xxx-xxx">
+            </div>
+            
+            <div class="input-group pagination-centered">
+              <div class="input-group-addon">Teléfono</div>
+              <input id="Telefono" type="text" class="form-control" name="XP" placeholder="8x9-xxx-xxxx">
+            </div>
+
+    </div>
+
+    <div id="my_camera" style="width:350px; height:200px; padding:0px 150px 200px 200px; margin:70px; "></div>
+    <div id="my_result"></div>
+    
+
+  </form>
+     
+     <br><br><br>
+     <div style = "padding: 0px 0px ; margin:-130px 0px 0px 125px;" >
+
+       <button type = "button" class = "btn btn-warning col-md-2 top-buffer" style = "display:block" 
+               onclick="addMasterHelp()"  > 
+           Agregar 
+       </button>
+       
+     </div> 
+    
+     <div style = "padding: 0px 0px; margin:0px 100px 0px 0px; border-spacing: 20px;" >
+         <button type = "button" class = "space btn btn-warning col-md-2 top-buffer" style = "display:inline-block;" 
+                 onclick="clearLocal()" > 
+             Reset
+         </button>
+       <!-- </div> -->
+     </div>
+    
+     <div style = "padding: 0px 0px; margin:0px 100px 0px 0px; border-spacing: 20px;" >
+         <button type = "button" class = "space btn btn-warning col-md-2 top-buffer" style = "display:inline-block;" 
+                 onclick="saveAll()" > 
+             Guardar
+         </button>
+
+     </div>
+
+
+<br><br><br><br><br><br>
+
+<div class = "table-responsive" >
+    <table class="table table-sm table-inverse" id = "mitabla" >
+
+      <thead>
+        <tr class="bg-warning">
+          <th>Cédula</th>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>Teléfono</th>
+          <th>Ver foto</th>
+          <th>Foto</th>
+          <th>borrar?</th>
+        </tr>
+      </thead>
+
+      <tbody>
+      </tbody>
+        
+    </table>
+
+    </div>
+</div>    
+    
+<script>
+
+function getVal( id )
+{
+  return $( "#" + id ).val() ;
+}
+
+var masters = [] ;
+var saved ;
+    
+function getNewRow( data )
+{
+   return "<td>##</td>".replace( "##" , data ) ;
+}
+    
+function newInputRow( data )
+{  
+   return '<td><input type="text" class="form-control" value="##"></td>'.replace( "##" , data ) ;
+}
+
+var editBtn = '<td><p data-placement="top" data-toggle="tooltip" title="Edit"><button class="btn btn-danger btn-s borrar-button" data-title="Edit" toggle="modal" data-target="#edit" " ><span class="glyphicon glyphicon-remove"></span></button></p></td>' ;
+
+var defaultUserBtn = '<td><button type="button" class="btn btn-default" def="true"><span class="glyphicon glyphicon-user"></span></button</td>'
+
+var selfieBtn = '<td> <a href="##" data-lightbox="image-1"> <img src = "##" class="selfie-icon"> </a> </button</td>'
+
+var takePhotoBtn = '<td><button type="button" class="btn btn-default takePhoto"><span class="glyphicon glyphicon-camera"></span></button</td>';
+
+function hi() 
+{  
+  $(this).closest( "tr" ).remove() ;   
+} 
+
+var addPokemon = function(){ /* console.log( "default add poke" ) ; */ } ;
+ 
+function addPokemonToTable( poke )
+{
+   var row = "<tr class='bg-warning'>" ; 
+       row += getNewRow( poke.nombre ) ; 
+       row += getNewRow( poke.nivel ) ; 
+       row += getNewRow( poke.xp ) ; 
+
+  $('#pokemones').append( row ) ; 
+}
+
+$( document ).ready(
+function () 
+{
+
+    $( "#mitabla" ).on( "click" , ".borrar-button" , 
+        function( event ) 
+        {
+          var row = $(this).closest( "tr" ).remove() ; 
+        }
+    ) ;
+
+    $( "#mitabla" ).on( "click" , ".takePhoto" , 
+        function( event ) 
+        {  
+
+            var row = $(this).closest( "tr" )[0] ;
+          
+            var cells = row.getElementsByTagName( 'td' ) ; 
+ 
+            Webcam.snap( 
+              function( data_uri ) 
+              {   
+                  cells[4].innerHTML = selfieBtn.replace( /##/g , data_uri ) ;
+              } 
+            ) ;
+        }
+    ) ;
+
+});
+    
+function saveAll()
+{
+  
+  var toSave = [] ;
+  var keys = [ "cedula" , "nombre" , "apellido" , "telefono" ] ;
+    
+   $( "#mitabla > tbody > tr" ).each( 
+      function( idx , tr )
+      {   
+          console.log( idx ) ;
+          var datos = {}
+          
+          var row = tr ;
+          
+          var cells = row.getElementsByTagName( 'td' ) ; 
+          
+          // -1 para omitir 'foto' y 'borrar'.
+          for( var i = 0 ; i < ( cells.length - 2 ) ; ++i )
+          { 
+            var input = cells[i].getElementsByTagName( 'input' ) ;
+            
+            datos[ keys[i] ] = $( input ).val() ; 
+          }
+
+          var selfieBtn = cells[4].getElementsByTagName( 'button' ) ;
+
+          if( !selfieBtn.length )
+          {
+             datos.foto = cells[4].getElementsByTagName( 'img' )[0].src ;
+          }
+          
+          toSave.push( datos ) ; 
+          
+      }
+                      
+   );
+  
+  localStorage.setItem( "datos" , JSON.stringify( toSave ) ) ;
+    
+}
+
+function appendToTable( obj )
+{
+   var row = "<tr class='bg-warning'>" ; 
+       row += newInputRow( obj.cedula ) ; 
+       row += newInputRow( obj.nombre ) ; 
+       row += newInputRow( obj.apellido ) ; 
+       row += newInputRow( obj.telefono ) ;
+
+       if( obj.foto )
+         row += selfieBtn.replace( /##/g , obj.foto ) ;
+       else 
+         row += defaultUserBtn ;
+
+       row += takePhotoBtn ;
+       row += editBtn ;
+   
+   var jq_row = $( row ) ; 
+
+   $('#mitabla').append( jq_row ) ;   
+}
+    
+function getRandom( min , max ) 
+{
+  return Math.floor( Math.random() * ( max - min ) ) + min ;
+}
+    
+function genereteID()
+{
+   var ced = String( getRandom( 0 , 2000 ) ) ; 
+    
+   while( ced.length < 4 )
+   {
+      ced = "0" + ced ;
+   }
+    
+   var temp = String( ( new Date ).valueOf() ) ;
+   
+   ced += temp.substr( 3 , temp.length - 1 ) ;
+   
+   var arr = ced.split( "" ) ; 
+   
+   arr.splice( 4 , 0 , "-" ) ;
+   arr.splice( 9 , 0 , "-" ) ;    
+    
+   return arr.join( "" ) ;
+}
+
+function newContact( ced , nombre , apellido , telefono )
+{
+   if( ced.length < 3 )
+       ced = genereteID() ;
+    
+   var contact = 
+   {
+       cedula   : ced , 
+       nombre   : nombre ,
+       apellido : apellido ,
+       telefono : telefono , 
+       foto     : null  
+   } ;
+    
+   appendToTable( contact ) ;
+
+   saveAll() ; 
+  
+}
+
+function loadAll()
+{
+  
+  var getted = localStorage.getItem( "datos" ) ;  
+    
+  if( getted == null ) 
+  {
+     return ;
+  }
+  
+  var personas = JSON.parse( getted ) ;
+    
+  for( var i = 0 ; i < personas.length ; ++i )
+  {   
+     appendToTable( personas[i] ) ; 
+  }
+    
+}
+
+function addMasterHelp()
+{
+   // console.log( $('#Nombre').text ) ;
+    
+   newContact( getVal( "Cedula" ) , 
+               getVal( "Nombre" ) , 
+               getVal( "Apellido" ) , 
+               getVal( "Telefono" ) 
+   )
+
+   $( '#datos' )[0].reset() ; // Reset all the fields.
+
+}
+    
+function clearLocal()
+{
+   localStorage.clear() ;
+}
+
+
+Webcam.attach( '#my_camera' );
+
+function take_snapshot() 
+{
+    Webcam.snap( function( data_uri ) 
+    {
+        document.getElementById('my_result').innerHTML = '<img src="'+data_uri+'"/>';
+    } );
+}
+
+
+</script>
+
+</body>
+
+</html>
+
