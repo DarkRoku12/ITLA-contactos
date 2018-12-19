@@ -1,5 +1,5 @@
 # ITLA-contactos
 
-Live: https://zalazdev.com/ITLA/contactos
+Live: https://zdev.com/ITLA/contactos
 
 Espero que le guste Amadis.
